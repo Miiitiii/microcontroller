@@ -11,12 +11,16 @@ PINA = 0x00;
 DDRB = 0xff;  
 PORTB = 0x00;
 #asm("sei")
-
+CKOPT = 0˜˜;
+CKSEL:1 = 1;
+CKSEL.0 = 1;
+CKSEL.2 = 1;˜
+CKSEL.3 = 1;
 while (1)
       {
              if(PINA.0==1)    
             {  
-                PORTB = 00000000;    
+                PORTB = 0;    
                 PORTB += 1;
                 state=1;
             }

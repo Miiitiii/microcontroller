@@ -1,8 +1,8 @@
 
-AVRASM ver. 2.1.30  D:\riiizz\Debug\List\8LED.asm Thu Dec 10 14:50:20 2020
+AVRASM ver. 2.1.30  D:\MyFProjects\microcontroller\8Led_project\C Code\Debug\List\8LED.asm Thu Dec 10 22:39:27 2020
 
-D:\riiizz\Debug\List\8LED.asm(1088): warning: Register r4 already defined by the .DEF directive
-D:\riiizz\Debug\List\8LED.asm(1089): warning: Register r5 already defined by the .DEF directive
+D:\MyFProjects\microcontroller\8Led_project\C Code\Debug\List\8LED.asm(1088): warning: Register r4 already defined by the .DEF directive
+D:\MyFProjects\microcontroller\8Led_project\C Code\Debug\List\8LED.asm(1089): warning: Register r5 already defined by the .DEF directive
                  
                  
                  ;CodeVisionAVR C Compiler V3.12 Advanced

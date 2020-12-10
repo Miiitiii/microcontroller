@@ -127,7 +127,7 @@ WatchAVR8LAutoVariables=0
 UseEEPROMLocation0=1
 RebuildAll=0
 LinkageInformationPresent=1
-COFFileTimeStamp=1368028747
+COFFileTimeStamp=1368044782
 Build=17
 [DefinedSymbolsDebug]
 Count=0
@@ -352,7 +352,7 @@ L13=Enhanced function parameters passing: Yes
 L14=Automatic register allocation: Yes
 L15=Smart register allocation: Yes
 L16=
-L17=Build: 16
+L17=Build: 17
 L18=806 line(s) compiled
 L19=No errors
 L20=No warnings
@@ -378,7 +378,7 @@ Lines=37
 L1=AVRASM: AVR macro assembler 2.1.30 (build 592 Nov  7 2008 12:38:17)
 L2=Copyright (C) 1995-2008 ATMEL Corporation
 L3=
-L4=D:\riiizz\Debug\List\8LED.asm(1356): No EEPROM data, deleting D:\riiizz\Debug\Exe\8LED.eep
+L4=D:\MyFProjects\microcontroller\8Led_project\C Code\Debug\List\8LED.asm(1356): No EEPROM data, deleting D:\MyFProjects\microcontroller\8Led_project\C Code\Debug\Exe\8LED.eep
 L5=
 L6=ATmega16 memory use summary [bytes]:
 L7=Segment   Begin    End      Code   Data   Used    Size   Use%
@@ -388,13 +388,13 @@ L10=[.dseg] 0x000060 0x000160      0      0      0    1024   0.0%
 L11=[.eseg] 0x000000 0x000000      0      0      0     512   0.0%
 L12=
 Lines=12
+[FoldedCode1]
+Blocks=0
 [HeadersList]
 Files=1
-F1=D:\riiizz\8LED.c
+F1=D:\MyFProjects\microcontroller\8Led_project\C Code\8LED.c
 [Header1]
 Files=3
 F1=D:\ProgramFiles\Code Vision\inc\mega16.h
 F2=D:\ProgramFiles\Code Vision\inc\mega16_bits.h
 F3=D:\ProgramFiles\Code Vision\inc\delay.h
-[FoldedCode1]
-Blocks=0
