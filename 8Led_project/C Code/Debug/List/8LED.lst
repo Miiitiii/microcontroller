@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.30  D:\MyFProjects\microcontroller\8Led_project\C Code\Debug\List\8LED.asm Thu Dec 10 22:39:27 2020
+AVRASM ver. 2.1.30  D:\MyFProjects\microcontroller\8Led_project\C Code\Debug\List\8LED.asm Fri Dec 11 10:50:23 2020
 
 D:\MyFProjects\microcontroller\8Led_project\C Code\Debug\List\8LED.asm(1088): warning: Register r4 already defined by the .DEF directive
 D:\MyFProjects\microcontroller\8Led_project\C Code\Debug\List\8LED.asm(1089): warning: Register r5 already defined by the .DEF directive
@@ -1110,7 +1110,7 @@ D:\MyFProjects\microcontroller\8Led_project\C Code\Debug\List\8LED.asm(1089): wa
 00000c 940c 0000 	JMP  0x00
 00000e 940c 0000 	JMP  0x00
 000010 940c 0000 	JMP  0x00
-000012 940c 0000 	JMP  0x00
+000012 940c 005c 	JMP  _timer0_ovf_isr
 000014 940c 0000 	JMP  0x00
 000016 940c 0000 	JMP  0x00
 000018 940c 0000 	JMP  0x00
@@ -1201,7 +1201,7 @@ D:\MyFProjects\microcontroller\8Led_project\C Code\Debug\List\8LED.asm(1089): wa
 000058 e6c0      	LDI  R28,LOW(__SRAM_START+__DSTACK_SIZE)
 000059 e0d1      	LDI  R29,HIGH(__SRAM_START+__DSTACK_SIZE)
                  
-00005a 940c 005c 	JMP  _main
+00005a 940c 0088 	JMP  _main
                  
                  	.ESEG
                  	.ORG 0
@@ -1226,142 +1226,220 @@ D:\MyFProjects\microcontroller\8Led_project\C Code\Debug\List\8LED.asm(1089): wa
                  ;
                  ;int state = 1;
                  ;
-                 ;void main(void)
-                 ; 0000 0007 {
+                 ;static unsigned int time_count;
+                 ;
+                 ;//interrupt for blinking 0.5 sec
+                 ;interrupt [TIM0_OVF] void timer0_ovf_isr(void)
+                 ; 0000 000A {
                  
                  	.CSEG
+                 _timer0_ovf_isr:
+                 ; .FSTART _timer0_ovf_isr
+00005c 93aa      	ST   -Y,R26
+00005d 93ba      	ST   -Y,R27
+00005e 93ea      	ST   -Y,R30
+00005f 93fa      	ST   -Y,R31
+000060 b7ef      	IN   R30,SREG
+000061 93ea      	ST   -Y,R30
+                 ; 0000 000B     TCNT0 = 31;
+000062 e1ef      	LDI  R30,LOW(31)
+000063 bfe2      	OUT  0x32,R30
+                 ; 0000 000C     ++time_count;
+000064 e6a0      	LDI  R26,LOW(_time_count_G000)
+000065 e0b1      	LDI  R27,HIGH(_time_count_G000)
+000066 91ed      	LD   R30,X+
+000067 91fd      	LD   R31,X+
+000068 9631      	ADIW R30,1
+000069 93fe      	ST   -X,R31
+00006a 93ee      	ST   -X,R30
+                 ; 0000 000D     if (time_count == 3333)
+00006b 91a0 0160 	LDS  R26,_time_count_G000
+00006d 91b0 0161 	LDS  R27,_time_count_G000+1
+00006f 30a5      	CPI  R26,LOW(0xD05)
+000070 e0ed      	LDI  R30,HIGH(0xD05)
+000071 07be      	CPC  R27,R30
+000072 f471      	BRNE _0x3
+                 ; 0000 000E   {
+                 ; 0000 000F         PORTC.0 = (PORTC.0 ^ 1);
+000073 e0a0      	LDI  R26,0
+000074 99a8      	SBIC 0x15,0
+000075 e0a1      	LDI  R26,1
+000076 e0e1      	LDI  R30,LOW(1)
+000077 27ea      	EOR  R30,R26
+000078 f411      	BRNE _0x4
+000079 98a8      	CBI  0x15,0
+00007a c001      	RJMP _0x5
+                 _0x4:
+00007b 9aa8      	SBI  0x15,0
+                 _0x5:
+                 ; 0000 0010         time_count = 0;
+00007c e0e0      	LDI  R30,LOW(0)
+00007d 93e0 0160 	STS  _time_count_G000,R30
+00007f 93e0 0161 	STS  _time_count_G000+1,R30
+                 ; 0000 0011      }
+                 ; 0000 0012 }
+                 _0x3:
+000081 91e9      	LD   R30,Y+
+000082 bfef      	OUT  SREG,R30
+000083 91f9      	LD   R31,Y+
+000084 91e9      	LD   R30,Y+
+000085 91b9      	LD   R27,Y+
+000086 91a9      	LD   R26,Y+
+000087 9518      	RETI
+                 ; .FEND
+                 ;
+                 ;void main(void)
+                 ; 0000 0015 {
                  _main:
                  ; .FSTART _main
-                 ; 0000 0008 
-                 ; 0000 0009 DDRA = 0x00;
-00005c e0e0      	LDI  R30,LOW(0)
-00005d bbea      	OUT  0x1A,R30
-                 ; 0000 000A PINA = 0x00;
-00005e bbe9      	OUT  0x19,R30
-                 ; 0000 000B DDRB = 0xff;
-00005f efef      	LDI  R30,LOW(255)
-000060 bbe7      	OUT  0x17,R30
-                 ; 0000 000C PORTB = 0x00;
-000061 e0e0      	LDI  R30,LOW(0)
-000062 bbe8      	OUT  0x18,R30
-                 ; 0000 000D #asm("sei")
-000063 9478      	sei
-                 ; 0000 000E 
-                 ; 0000 000F while (1)
-                 _0x3:
-                 ; 0000 0010       {
-                 ; 0000 0011              if(PINA.0==1)
-000064 9bc8      	SBIS 0x19,0
-000065 c008      	RJMP _0x6
-                 ; 0000 0012             {
-                 ; 0000 0013                 PORTB = 0;
-000066 e0e0      	LDI  R30,LOW(0)
-000067 bbe8      	OUT  0x18,R30
-                 ; 0000 0014                 PORTB += 1;
-000068 b3e8      	IN   R30,0x18
-000069 5fef      	SUBI R30,-LOW(1)
-00006a bbe8      	OUT  0x18,R30
-                 ; 0000 0015                 state=1;
-00006b e0e1      	LDI  R30,LOW(1)
-00006c e0f0      	LDI  R31,HIGH(1)
-00006d 012f      	MOVW R4,R30
-                 ; 0000 0016             }
-                 ; 0000 0017 
-                 ; 0000 0018             if(state == 1 && PORTB != 0)
+                 ; 0000 0016 
+                 ; 0000 0017 //for 0.5 sec
+                 ; 0000 0018 DDRC = 0x01;
+000088 e0e1      	LDI  R30,LOW(1)
+000089 bbe4      	OUT  0x14,R30
+                 ; 0000 0019 TCCR0=0x02;
+00008a e0e2      	LDI  R30,LOW(2)
+00008b bfe3      	OUT  0x33,R30
+                 ; 0000 001A TCNT0=31;
+00008c e1ef      	LDI  R30,LOW(31)
+00008d bfe2      	OUT  0x32,R30
+                 ; 0000 001B TIMSK=0x01;
+00008e e0e1      	LDI  R30,LOW(1)
+00008f bfe9      	OUT  0x39,R30
+                 ; 0000 001C 
+                 ; 0000 001D DDRA = 0x00;
+000090 e0e0      	LDI  R30,LOW(0)
+000091 bbea      	OUT  0x1A,R30
+                 ; 0000 001E PINA = 0x00;
+000092 bbe9      	OUT  0x19,R30
+                 ; 0000 001F DDRB = 0xff;
+000093 efef      	LDI  R30,LOW(255)
+000094 bbe7      	OUT  0x17,R30
+                 ; 0000 0020 PORTB = 0x00;
+000095 e0e0      	LDI  R30,LOW(0)
+000096 bbe8      	OUT  0x18,R30
+                 ; 0000 0021 #asm("sei")
+000097 9478      	sei
+                 ; 0000 0022 
+                 ; 0000 0023 while (1)
                  _0x6:
-00006e e0e1      	LDI  R30,LOW(1)
-00006f e0f0      	LDI  R31,HIGH(1)
-000070 15e4      	CP   R30,R4
-000071 05f5      	CPC  R31,R5
-000072 f419      	BRNE _0x8
-000073 b3e8      	IN   R30,0x18
-000074 30e0      	CPI  R30,0
-000075 f409      	BRNE _0x9
-                 _0x8:
-000076 c00d      	RJMP _0x7
+                 ; 0000 0024       {
+                 ; 0000 0025              if(PINA.0==1)
+000098 9bc8      	SBIS 0x19,0
+000099 c008      	RJMP _0x9
+                 ; 0000 0026             {
+                 ; 0000 0027                 PORTB = 0;
+00009a e0e0      	LDI  R30,LOW(0)
+00009b bbe8      	OUT  0x18,R30
+                 ; 0000 0028                 PORTB += 1;
+00009c b3e8      	IN   R30,0x18
+00009d 5fef      	SUBI R30,-LOW(1)
+00009e bbe8      	OUT  0x18,R30
+                 ; 0000 0029                 state=1;
+00009f e0e1      	LDI  R30,LOW(1)
+0000a0 e0f0      	LDI  R31,HIGH(1)
+0000a1 012f      	MOVW R4,R30
+                 ; 0000 002A             }
+                 ; 0000 002B 
+                 ; 0000 002C             if(state == 1 && PORTB != 0)
                  _0x9:
-                 ; 0000 0019             {
-                 ; 0000 001A                 delay_ms(50);
-000077 e3a2      	LDI  R26,LOW(50)
-000078 e0b0      	LDI  R27,0
-000079 940e 0098 	CALL _delay_ms
-                 ; 0000 001B                 PORTB = PORTB<<1;
-00007b b3e8      	IN   R30,0x18
-00007c 0fee      	LSL  R30
-00007d bbe8      	OUT  0x18,R30
-                 ; 0000 001C                 if(PORTB == 128)
-00007e b3e8      	IN   R30,0x18
-00007f 38e0      	CPI  R30,LOW(0x80)
-000080 f411      	BRNE _0xA
-                 ; 0000 001D                 {
-                 ; 0000 001E                   state = 0;
-000081 2444      	CLR  R4
-000082 2455      	CLR  R5
-                 ; 0000 001F                 }
-                 ; 0000 0020             }
-                 _0xA:
-                 ; 0000 0021             else
-000083 c012      	RJMP _0xB
-                 _0x7:
-                 ; 0000 0022             {
-                 ; 0000 0023                 if(PORTB == 0)
-000084 b3e8      	IN   R30,0x18
-000085 30e0      	CPI  R30,0
-000086 f431      	BRNE _0xC
-                 ; 0000 0024                 {
-                 ; 0000 0025                   PORTB = 0;
-000087 e0e0      	LDI  R30,LOW(0)
-000088 bbe8      	OUT  0x18,R30
-                 ; 0000 0026                   state = 1;
-000089 e0e1      	LDI  R30,LOW(1)
-00008a e0f0      	LDI  R31,HIGH(1)
-00008b 012f      	MOVW R4,R30
-                 ; 0000 0027                 }
-                 ; 0000 0028                 else
-00008c c009      	RJMP _0xD
-                 _0xC:
-                 ; 0000 0029                 {
-                 ; 0000 002A                 delay_ms(50);
-00008d e3a2      	LDI  R26,LOW(50)
-00008e e0b0      	LDI  R27,0
-00008f 940e 0098 	CALL _delay_ms
-                 ; 0000 002B                 PORTB = PORTB>>1;
-000091 b3e8      	IN   R30,0x18
-000092 e0f0      	LDI  R31,0
-000093 95f5      	ASR  R31
-000094 95e7      	ROR  R30
-000095 bbe8      	OUT  0x18,R30
-                 ; 0000 002C                 }
-                 _0xD:
-                 ; 0000 002D             }
+0000a2 e0e1      	LDI  R30,LOW(1)
+0000a3 e0f0      	LDI  R31,HIGH(1)
+0000a4 15e4      	CP   R30,R4
+0000a5 05f5      	CPC  R31,R5
+0000a6 f419      	BRNE _0xB
+0000a7 b3e8      	IN   R30,0x18
+0000a8 30e0      	CPI  R30,0
+0000a9 f409      	BRNE _0xC
                  _0xB:
-                 ; 0000 002E 
-                 ; 0000 002F       }
-000096 cfcd      	RJMP _0x3
-                 ; 0000 0030 }
+0000aa c00d      	RJMP _0xA
+                 _0xC:
+                 ; 0000 002D             {
+                 ; 0000 002E                 delay_ms(50);
+0000ab e3a2      	LDI  R26,LOW(50)
+0000ac e0b0      	LDI  R27,0
+0000ad 940e 00cc 	CALL _delay_ms
+                 ; 0000 002F                 PORTB = PORTB<<1;
+0000af b3e8      	IN   R30,0x18
+0000b0 0fee      	LSL  R30
+0000b1 bbe8      	OUT  0x18,R30
+                 ; 0000 0030                 if(PORTB == 128)
+0000b2 b3e8      	IN   R30,0x18
+0000b3 38e0      	CPI  R30,LOW(0x80)
+0000b4 f411      	BRNE _0xD
+                 ; 0000 0031                 {
+                 ; 0000 0032                   state = 0;
+0000b5 2444      	CLR  R4
+0000b6 2455      	CLR  R5
+                 ; 0000 0033                 }
+                 ; 0000 0034             }
+                 _0xD:
+                 ; 0000 0035             else
+0000b7 c012      	RJMP _0xE
+                 _0xA:
+                 ; 0000 0036             {
+                 ; 0000 0037                 if(PORTB == 0)
+0000b8 b3e8      	IN   R30,0x18
+0000b9 30e0      	CPI  R30,0
+0000ba f431      	BRNE _0xF
+                 ; 0000 0038                 {
+                 ; 0000 0039                   PORTB = 0;
+0000bb e0e0      	LDI  R30,LOW(0)
+0000bc bbe8      	OUT  0x18,R30
+                 ; 0000 003A                   state = 1;
+0000bd e0e1      	LDI  R30,LOW(1)
+0000be e0f0      	LDI  R31,HIGH(1)
+0000bf 012f      	MOVW R4,R30
+                 ; 0000 003B                 }
+                 ; 0000 003C                 else
+0000c0 c009      	RJMP _0x10
+                 _0xF:
+                 ; 0000 003D                 {
+                 ; 0000 003E                 delay_ms(50);
+0000c1 e3a2      	LDI  R26,LOW(50)
+0000c2 e0b0      	LDI  R27,0
+0000c3 940e 00cc 	CALL _delay_ms
+                 ; 0000 003F                 PORTB = PORTB>>1;
+0000c5 b3e8      	IN   R30,0x18
+0000c6 e0f0      	LDI  R31,0
+0000c7 95f5      	ASR  R31
+0000c8 95e7      	ROR  R30
+0000c9 bbe8      	OUT  0x18,R30
+                 ; 0000 0040                 }
+                 _0x10:
+                 ; 0000 0041             }
                  _0xE:
-000097 cfff      	RJMP _0xE
+                 ; 0000 0042 
+                 ; 0000 0043       }
+0000ca cfcd      	RJMP _0x6
+                 ; 0000 0044 }
+                 _0x11:
+0000cb cfff      	RJMP _0x11
                  ; .FEND
+                 
+                 	.DSEG
+                 _time_count_G000:
+000160           	.BYTE 0x2
                  
                  	.CSEG
                  
                  	.CSEG
                  _delay_ms:
-000098 9610      	adiw r26,0
-000099 f039      	breq __delay_ms1
+0000cc 9610      	adiw r26,0
+0000cd f039      	breq __delay_ms1
                  __delay_ms0:
                 +
-00009a eb88     +LDI R24 , LOW ( 0xBB8 )
-00009b e09b     +LDI R25 , HIGH ( 0xBB8 )
+0000ce eb88     +LDI R24 , LOW ( 0xBB8 )
+0000cf e09b     +LDI R25 , HIGH ( 0xBB8 )
                 +__DELAY_USW_LOOP :
-00009c 9701     +SBIW R24 , 1
-00009d f7f1     +BRNE __DELAY_USW_LOOP
+0000d0 9701     +SBIW R24 , 1
+0000d1 f7f1     +BRNE __DELAY_USW_LOOP
                  	__DELAY_USW 0xBB8
-00009e 95a8      	wdr
-00009f 9711      	sbiw r26,1
-0000a0 f7c9      	brne __delay_ms0
+0000d2 95a8      	wdr
+0000d3 9711      	sbiw r26,1
+0000d4 f7c9      	brne __delay_ms0
                  __delay_ms1:
-0000a1 9508      	ret
+0000d5 9508      	ret
                  
                  ;END OF CODE MARKER
                  __END_OF_CODE:
@@ -1385,38 +1463,38 @@ ATmega16 register use summary:
 r0 :   4 r1 :   1 r2 :   0 r3 :   0 r4 :   4 r5 :   2 r6 :   0 r7 :   0 
 r8 :   0 r9 :   0 r10:   0 r11:   0 r12:   0 r13:   0 r14:   0 r15:   0 
 r16:   0 r17:   0 r18:   0 r19:   0 r20:   0 r21:   0 r22:   2 r23:   0 
-r24:   9 r25:   3 r26:   7 r27:   4 r28:   1 r29:   1 r30:  46 r31:   9 
-x  :   3 y  :   0 z  :   7 
-Registers used: 15 out of 35 (42.9%)
+r24:   9 r25:   3 r26:  15 r27:   9 r28:   1 r29:   1 r30:  72 r31:  13 
+x  :   7 y  :  10 z  :   7 
+Registers used: 16 out of 35 (45.7%)
 
 ATmega16 instruction use summary:
 .lds  :   0 .lds.l:   0 .sts  :   0 .sts.l:   0 adc   :   0 add   :   0 
-adiw  :   1 and   :   0 andi  :   0 asr   :   1 bclr  :   0 bld   :   0 
+adiw  :   2 and   :   0 andi  :   0 asr   :   1 bclr  :   0 bld   :   0 
 brbc  :   0 brbs  :   0 brcc  :   0 brcs  :   0 break :   0 breq  :   2 
 brge  :   0 brhc  :   0 brhs  :   0 brid  :   0 brie  :   0 brlo  :   0 
-brlt  :   0 brmi  :   0 brne  :   9 brpl  :   0 brsh  :   0 brtc  :   0 
+brlt  :   0 brmi  :   0 brne  :  11 brpl  :   0 brsh  :   0 brtc  :   0 
 brts  :   0 brvc  :   0 brvs  :   0 bset  :   0 bst   :   0 call  :   2 
-cbi   :   0 cbr   :   0 clc   :   0 clh   :   0 cli   :   1 cln   :   0 
+cbi   :   1 cbr   :   0 clc   :   0 clh   :   0 cli   :   1 cln   :   0 
 clr   :   4 cls   :   0 clt   :   0 clv   :   0 clz   :   0 com   :   0 
-cp    :   1 cpc   :   1 cpi   :   3 cpse  :   0 dec   :   1 des   :   0 
-eor   :   0 fmul  :   0 fmuls :   0 fmulsu:   0 icall :   0 ijmp  :   0 
-in    :   6 inc   :   0 jmp   :  22 ld    :   0 ldd   :   0 ldi   :  30 
-lds   :   0 lpm   :   7 lsl   :   1 lsr   :   0 mov   :   0 movw  :   5 
+cp    :   1 cpc   :   2 cpi   :   4 cpse  :   0 dec   :   1 des   :   0 
+eor   :   1 fmul  :   0 fmuls :   0 fmulsu:   0 icall :   0 ijmp  :   0 
+in    :   7 inc   :   0 jmp   :  22 ld    :   7 ldd   :   0 ldi   :  42 
+lds   :   2 lpm   :   7 lsl   :   1 lsr   :   0 mov   :   0 movw  :   5 
 mul   :   0 muls  :   0 mulsu :   0 neg   :   0 nop   :   0 or    :   0 
-ori   :   0 out   :  15 pop   :   0 push  :   0 rcall :   0 ret   :   1 
-reti  :   0 rjmp  :   7 rol   :   0 ror   :   1 sbc   :   0 sbci  :   0 
-sbi   :   0 sbic  :   0 sbis  :   1 sbiw  :   5 sbr   :   0 sbrc  :   0 
+ori   :   0 out   :  21 pop   :   0 push  :   0 rcall :   0 ret   :   1 
+reti  :   1 rjmp  :   8 rol   :   0 ror   :   1 sbc   :   0 sbci  :   0 
+sbi   :   1 sbic  :   1 sbis  :   1 sbiw  :   5 sbr   :   0 sbrc  :   0 
 sbrs  :   0 sec   :   0 seh   :   0 sei   :   1 sen   :   0 ser   :   0 
 ses   :   0 set   :   0 sev   :   0 sez   :   0 sleep :   0 spm   :   0 
-st    :   3 std   :   0 sts   :   0 sub   :   0 subi  :   1 swap  :   0 
+st    :  10 std   :   0 sts   :   2 sub   :   0 subi  :   1 swap  :   0 
 tst   :   0 wdr   :   1 
-Instructions used: 27 out of 116 (23.3%)
+Instructions used: 35 out of 116 (30.2%)
 
 ATmega16 memory use summary [bytes]:
 Segment   Begin    End      Code   Data   Used    Size   Use%
 ---------------------------------------------------------------
-[.cseg] 0x000000 0x000144    314     10    324   16384   2.0%
-[.dseg] 0x000060 0x000160      0      0      0    1024   0.0%
+[.cseg] 0x000000 0x0001ac    418     10    428   16384   2.6%
+[.dseg] 0x000060 0x000162      0      2      2    1024   0.2%
 [.eseg] 0x000000 0x000000      0      0      0     512   0.0%
 
 Assembly complete, 0 errors, 2 warnings

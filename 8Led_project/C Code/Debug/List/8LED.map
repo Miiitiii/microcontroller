@@ -1,6 +1,7 @@
 RAM Allocation [bytes]
 Variable                                                                          Address   Size
 ------------------------------------------------------------------------------------------------
+time_count                                                                        0x0160       2
 
 EEPROM Allocation [bytes]
 Variable                                                                          Address   Size
@@ -14,4 +15,5 @@ state                                                                           
 FLASH Allocation [words]
 Function                                                                          Address   Size
 ------------------------------------------------------------------------------------------------
-main                                                                              0x0005C     60
+timer0_ovf_isr                                                                    0x0005C     44
+main                                                                              0x00088     68

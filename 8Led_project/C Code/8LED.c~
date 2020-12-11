@@ -3,6 +3,20 @@
 
 int state = 1;
 
+static unsigned int time_count;
+
+//interrupt for blinking 0.5 sec
+interrupt [TIM0_OVF] void timer0_ovf_isr(void) 
+{
+    TCNT0 = 31; 
+    ++time_count; 
+    if (time_count == 3333)
+  {
+        PORTC.0 = (PORTC.0 ^ 1); 
+        time_count = 0; 
+     }
+}
+
 void main(void)
 {
 
@@ -11,11 +25,7 @@ PINA = 0x00;
 DDRB = 0xff;  
 PORTB = 0x00;
 #asm("sei")
-CKOPT = 0˜˜;
-CKSEL:1 = 1;
-CKSEL.0 = 1;
-CKSEL.2 = 1;˜
-CKSEL.3 = 1;
+
 while (1)
       {
              if(PINA.0==1)    

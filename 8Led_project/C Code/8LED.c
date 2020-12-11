@@ -3,8 +3,28 @@
 
 int state = 1;
 
-void main(void)
+static unsigned int time_count;
+
+//interrupt for blinking 0.5 sec
+interrupt [TIM0_OVF] void timer0_ovf_isr(void) 
 {
+    TCNT0 = 31; 
+    ++time_count; 
+    if (time_count == 3333)
+  {
+        PORTC.0 = (PORTC.0 ^ 1); 
+        time_count = 0; 
+     }
+}
+
+void main(void)
+{          
+
+//for 0.5 sec
+DDRC = 0x01;
+TCCR0=0x02;
+TCNT0=31;
+TIMSK=0x01; 
 
 DDRA = 0x00;   
 PINA = 0x00;  

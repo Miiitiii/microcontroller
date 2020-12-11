@@ -1104,7 +1104,7 @@ __START_OF_CODE:
 	JMP  0x00
 	JMP  0x00
 	JMP  0x00
-	JMP  0x00
+	JMP  _timer0_ovf_isr
 	JMP  0x00
 	JMP  0x00
 	JMP  0x00
@@ -1220,122 +1220,200 @@ __GLOBAL_INI_END:
 ;
 ;int state = 1;
 ;
-;void main(void)
-; 0000 0007 {
+;static unsigned int time_count;
+;
+;//interrupt for blinking 0.5 sec
+;interrupt [TIM0_OVF] void timer0_ovf_isr(void)
+; 0000 000A {
 
 	.CSEG
+_timer0_ovf_isr:
+; .FSTART _timer0_ovf_isr
+	ST   -Y,R26
+	ST   -Y,R27
+	ST   -Y,R30
+	ST   -Y,R31
+	IN   R30,SREG
+	ST   -Y,R30
+; 0000 000B     TCNT0 = 31;
+	LDI  R30,LOW(31)
+	OUT  0x32,R30
+; 0000 000C     ++time_count;
+	LDI  R26,LOW(_time_count_G000)
+	LDI  R27,HIGH(_time_count_G000)
+	LD   R30,X+
+	LD   R31,X+
+	ADIW R30,1
+	ST   -X,R31
+	ST   -X,R30
+; 0000 000D     if (time_count == 3333)
+	LDS  R26,_time_count_G000
+	LDS  R27,_time_count_G000+1
+	CPI  R26,LOW(0xD05)
+	LDI  R30,HIGH(0xD05)
+	CPC  R27,R30
+	BRNE _0x3
+; 0000 000E   {
+; 0000 000F         PORTC.0 = (PORTC.0 ^ 1);
+	LDI  R26,0
+	SBIC 0x15,0
+	LDI  R26,1
+	LDI  R30,LOW(1)
+	EOR  R30,R26
+	BRNE _0x4
+	CBI  0x15,0
+	RJMP _0x5
+_0x4:
+	SBI  0x15,0
+_0x5:
+; 0000 0010         time_count = 0;
+	LDI  R30,LOW(0)
+	STS  _time_count_G000,R30
+	STS  _time_count_G000+1,R30
+; 0000 0011      }
+; 0000 0012 }
+_0x3:
+	LD   R30,Y+
+	OUT  SREG,R30
+	LD   R31,Y+
+	LD   R30,Y+
+	LD   R27,Y+
+	LD   R26,Y+
+	RETI
+; .FEND
+;
+;void main(void)
+; 0000 0015 {
 _main:
 ; .FSTART _main
-; 0000 0008 
-; 0000 0009 DDRA = 0x00;
+; 0000 0016 
+; 0000 0017 //for 0.5 sec
+; 0000 0018 DDRC = 0x01;
+	LDI  R30,LOW(1)
+	OUT  0x14,R30
+; 0000 0019 TCCR0=0x02;
+	LDI  R30,LOW(2)
+	OUT  0x33,R30
+; 0000 001A TCNT0=31;
+	LDI  R30,LOW(31)
+	OUT  0x32,R30
+; 0000 001B TIMSK=0x01;
+	LDI  R30,LOW(1)
+	OUT  0x39,R30
+; 0000 001C 
+; 0000 001D DDRA = 0x00;
 	LDI  R30,LOW(0)
 	OUT  0x1A,R30
-; 0000 000A PINA = 0x00;
+; 0000 001E PINA = 0x00;
 	OUT  0x19,R30
-; 0000 000B DDRB = 0xff;
+; 0000 001F DDRB = 0xff;
 	LDI  R30,LOW(255)
 	OUT  0x17,R30
-; 0000 000C PORTB = 0x00;
+; 0000 0020 PORTB = 0x00;
 	LDI  R30,LOW(0)
 	OUT  0x18,R30
-; 0000 000D #asm("sei")
+; 0000 0021 #asm("sei")
 	sei
-; 0000 000E 
-; 0000 000F while (1)
-_0x3:
-; 0000 0010       {
-; 0000 0011              if(PINA.0==1)
+; 0000 0022 
+; 0000 0023 while (1)
+_0x6:
+; 0000 0024       {
+; 0000 0025              if(PINA.0==1)
 	SBIS 0x19,0
-	RJMP _0x6
-; 0000 0012             {
-; 0000 0013                 PORTB = 0;
+	RJMP _0x9
+; 0000 0026             {
+; 0000 0027                 PORTB = 0;
 	LDI  R30,LOW(0)
 	OUT  0x18,R30
-; 0000 0014                 PORTB += 1;
+; 0000 0028                 PORTB += 1;
 	IN   R30,0x18
 	SUBI R30,-LOW(1)
 	OUT  0x18,R30
-; 0000 0015                 state=1;
+; 0000 0029                 state=1;
 	LDI  R30,LOW(1)
 	LDI  R31,HIGH(1)
 	MOVW R4,R30
-; 0000 0016             }
-; 0000 0017 
-; 0000 0018             if(state == 1 && PORTB != 0)
-_0x6:
+; 0000 002A             }
+; 0000 002B 
+; 0000 002C             if(state == 1 && PORTB != 0)
+_0x9:
 	LDI  R30,LOW(1)
 	LDI  R31,HIGH(1)
 	CP   R30,R4
 	CPC  R31,R5
-	BRNE _0x8
-	IN   R30,0x18
-	CPI  R30,0
-	BRNE _0x9
-_0x8:
-	RJMP _0x7
-_0x9:
-; 0000 0019             {
-; 0000 001A                 delay_ms(50);
-	LDI  R26,LOW(50)
-	LDI  R27,0
-	CALL _delay_ms
-; 0000 001B                 PORTB = PORTB<<1;
-	IN   R30,0x18
-	LSL  R30
-	OUT  0x18,R30
-; 0000 001C                 if(PORTB == 128)
-	IN   R30,0x18
-	CPI  R30,LOW(0x80)
-	BRNE _0xA
-; 0000 001D                 {
-; 0000 001E                   state = 0;
-	CLR  R4
-	CLR  R5
-; 0000 001F                 }
-; 0000 0020             }
-_0xA:
-; 0000 0021             else
-	RJMP _0xB
-_0x7:
-; 0000 0022             {
-; 0000 0023                 if(PORTB == 0)
+	BRNE _0xB
 	IN   R30,0x18
 	CPI  R30,0
 	BRNE _0xC
-; 0000 0024                 {
-; 0000 0025                   PORTB = 0;
-	LDI  R30,LOW(0)
-	OUT  0x18,R30
-; 0000 0026                   state = 1;
-	LDI  R30,LOW(1)
-	LDI  R31,HIGH(1)
-	MOVW R4,R30
-; 0000 0027                 }
-; 0000 0028                 else
-	RJMP _0xD
+_0xB:
+	RJMP _0xA
 _0xC:
-; 0000 0029                 {
-; 0000 002A                 delay_ms(50);
+; 0000 002D             {
+; 0000 002E                 delay_ms(50);
 	LDI  R26,LOW(50)
 	LDI  R27,0
 	CALL _delay_ms
-; 0000 002B                 PORTB = PORTB>>1;
+; 0000 002F                 PORTB = PORTB<<1;
+	IN   R30,0x18
+	LSL  R30
+	OUT  0x18,R30
+; 0000 0030                 if(PORTB == 128)
+	IN   R30,0x18
+	CPI  R30,LOW(0x80)
+	BRNE _0xD
+; 0000 0031                 {
+; 0000 0032                   state = 0;
+	CLR  R4
+	CLR  R5
+; 0000 0033                 }
+; 0000 0034             }
+_0xD:
+; 0000 0035             else
+	RJMP _0xE
+_0xA:
+; 0000 0036             {
+; 0000 0037                 if(PORTB == 0)
+	IN   R30,0x18
+	CPI  R30,0
+	BRNE _0xF
+; 0000 0038                 {
+; 0000 0039                   PORTB = 0;
+	LDI  R30,LOW(0)
+	OUT  0x18,R30
+; 0000 003A                   state = 1;
+	LDI  R30,LOW(1)
+	LDI  R31,HIGH(1)
+	MOVW R4,R30
+; 0000 003B                 }
+; 0000 003C                 else
+	RJMP _0x10
+_0xF:
+; 0000 003D                 {
+; 0000 003E                 delay_ms(50);
+	LDI  R26,LOW(50)
+	LDI  R27,0
+	CALL _delay_ms
+; 0000 003F                 PORTB = PORTB>>1;
 	IN   R30,0x18
 	LDI  R31,0
 	ASR  R31
 	ROR  R30
 	OUT  0x18,R30
-; 0000 002C                 }
-_0xD:
-; 0000 002D             }
-_0xB:
-; 0000 002E 
-; 0000 002F       }
-	RJMP _0x3
-; 0000 0030 }
+; 0000 0040                 }
+_0x10:
+; 0000 0041             }
 _0xE:
-	RJMP _0xE
+; 0000 0042 
+; 0000 0043       }
+	RJMP _0x6
+; 0000 0044 }
+_0x11:
+	RJMP _0x11
 ; .FEND
+
+	.DSEG
+_time_count_G000:
+	.BYTE 0x2
 
 	.CSEG
 
