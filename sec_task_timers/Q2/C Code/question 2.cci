@@ -1,0 +1,13 @@
+VERSION:3 SOURCE_TIMESTAMP:519443A3
+NODE:I LEVEL:0 LINE:1 "D:\ProgramFiles\Code Vision\inc\mega16.h"
+NODE:I LEVEL:0 LINE:2 "D:\ProgramFiles\Code Vision\inc\delay.h"
+NODE:V LEVEL:0 LINE:4 "SevSeg -> RAM:????"
+NODE:V LEVEL:0 LINE:5 "Timer1Counter -> R4,R5"
+NODE:V LEVEL:0 LINE:6 "temp -> R6,R7"
+NODE:V LEVEL:0 LINE:7 "Timer0Counter -> R8,R9"
+NODE:V LEVEL:0 LINE:8 "SevenSegCounter -> RAM:????"
+NODE:V LEVEL:0 LINE:9 "i -> R10,R11"
+NODE:V LEVEL:0 LINE:10 "lastSevenSeg -> R12,R13"
+NODE:F LEVEL:0 LINE:15 "timer0_ovf_isr(void)"
+NODE:F LEVEL:0 LINE:37 "timer1_ovf_isr(void)"
+NODE:F LEVEL:0 LINE:63 "main(void)"

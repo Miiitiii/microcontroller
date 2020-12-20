@@ -1,0 +1,2 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"question 2.c" LINE:63
+timer1_ovf_isr DSTACK_USAGE:6 DSTACK_LEVEL:6 FILE:"question 2.c" LINE:37
