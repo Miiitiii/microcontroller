@@ -1,0 +1,8 @@
+VERSION:3 SOURCE_TIMESTAMP:519D8D5C
+NODE:I LEVEL:0 LINE:24 "D:\ProgramFiles\Code Vision\inc\mega16.h"
+NODE:I LEVEL:0 LINE:25 "D:\ProgramFiles\Code Vision\inc\alcd.h"
+NODE:I LEVEL:0 LINE:26 "D:\ProgramFiles\Code Vision\inc\stdio.h"
+NODE:V LEVEL:0 LINE:28 "init -> R4,R5"
+NODE:V LEVEL:0 LINE:30 "overflow -> R6,R7"
+NODE:F LEVEL:0 LINE:32 "timer1_ovf_isr(void)"
+NODE:F LEVEL:0 LINE:52 "main(void)"
