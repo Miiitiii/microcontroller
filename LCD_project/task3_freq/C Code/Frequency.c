@@ -1,0 +1,81 @@
+/*******************************************************
+This program was created by the
+CodeWizardAVR V3.12 Advanced
+Automatic Program Generator
+© Copyright 1998-2014 Pavel Haiduc, HP InfoTech s.r.l.
+http://www.hpinfotech.com
+
+Project : Frequency
+Version : 
+Date    : 12/30/2020
+Author  : Mahdi Firuzbakht
+Company : 
+Comments: 
+
+
+Chip type               : ATmega16
+Program type            : Application
+AVR Core Clock frequency: 16.000000 MHz
+Memory model            : Small
+External RAM size       : 0
+Data Stack size         : 256
+*******************************************************/
+
+#include <mega16.h>
+#include <alcd.h>
+#include <stdio.h>
+#include <delay.h>
+
+#define ICR1 256 * ICR1H + ICR1L;
+
+unsigned int riseStartEdge;
+unsigned int fallStartEdge;
+unsigned int riseEndEdge;
+
+char frequency[16];
+
+unsigned int period;
+long freq;
+
+void main(void)
+{
+
+lcd_init(20);
+PORTD = 0x00;
+    
+    while(1)
+    {
+        TCCR1A = 0;
+        TCNT1=0;
+        TIFR = (1<<ICF1);      
+
+        TCCR1B = 0x41;  
+        while ((TIFR&(1<<ICF1)) == 0);
+        riseStartEdge = ICR1;         
+        TIFR = (1<<ICF1);     
+                
+        TCCR1B = 0x01;    
+        while ((TIFR&(1<<ICF1)) == 0);
+        fallStartEdge = ICR1;          
+        TIFR = (1<<ICF1);     
+                
+        TCCR1B = 0x41;
+        while ((TIFR&(1<<ICF1)) == 0);
+        riseEndEdge = ICR1; 
+        TIFR = (1<<ICF1);
+
+        TCCR1B = 0;
+		
+		if(riseStartEdge < riseEndEdge)
+		{
+			period = riseEndEdge - riseStartEdge;
+			
+			freq= 8000000UL/period;
+            sprintf(frequency,"Freq: %d Hz", (int)freq);
+			
+            lcd_clear();
+			lcd_puts(frequency);
+		}else lcd_puts("Waiting...");
+        
+	}
+}

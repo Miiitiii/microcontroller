@@ -1,0 +1,13 @@
+VERSION:3 SOURCE_TIMESTAMP:519E99F4
+NODE:I LEVEL:0 LINE:24 "D:\ProgramFiles\Code Vision\inc\mega16.h"
+NODE:I LEVEL:0 LINE:25 "D:\ProgramFiles\Code Vision\inc\alcd.h"
+NODE:I LEVEL:0 LINE:26 "D:\ProgramFiles\Code Vision\inc\stdio.h"
+NODE:I LEVEL:0 LINE:27 "D:\ProgramFiles\Code Vision\inc\delay.h"
+NODE:M LEVEL:0 LINE:29 "ICR1"
+NODE:V LEVEL:0 LINE:31 "riseStartEdge -> R4,R5"
+NODE:V LEVEL:0 LINE:32 "fallStartEdge -> R6,R7"
+NODE:V LEVEL:0 LINE:33 "riseEndEdge -> R8,R9"
+NODE:V LEVEL:0 LINE:35 "frequency -> RAM:????"
+NODE:V LEVEL:0 LINE:37 "period -> R10,R11"
+NODE:V LEVEL:0 LINE:38 "freq -> RAM:????"
+NODE:F LEVEL:0 LINE:40 "main(void)"
