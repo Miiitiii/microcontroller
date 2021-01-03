@@ -6,4 +6,4 @@
 ## third task 
 > LCD project
 ## fourth taks 
-> LCD Counter project
+> PCB Counter project
