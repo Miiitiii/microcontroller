@@ -1,11 +1,11 @@
 # Microcontroller
-## first task 
+## First task 
 > 8Led Project
-## sec task 
+## Second task 
 > Timers
-## third task 
+## Third task 
 > LCD project
-## fourth taks 
+## Fourth task 
 > PCB Counter project  
   
 PCB Layout
@@ -14,3 +14,6 @@ PCB Layout
   
 Schematic Layout
 ![Alt text](https://github.com/Miiitiii/microcontroller/blob/main/PCB_counter_project/PCB%20Counter%20-%20Schematic%20Layout%20.png)
+
+## Fifth task
+>Motor Stepper
