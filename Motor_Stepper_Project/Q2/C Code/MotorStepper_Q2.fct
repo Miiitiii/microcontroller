@@ -1,0 +1,2 @@
+main DSTACK_USAGE:0 DSTACK_LEVEL:0 FILE:"MotorStepper_Q2.c" LINE:52
+timer0_ovf_isr DSTACK_USAGE:6 DSTACK_LEVEL:6 FILE:"MotorStepper_Q2.c" LINE:30

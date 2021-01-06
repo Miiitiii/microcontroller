@@ -53,8 +53,8 @@ void main(void)
 {
 // Declare your local variables here
 
-        DDRA = 0b11111111;
-        TCNT0 = 176; 
+DDRA = 0b11111111;
+TCNT0 = 176; 
         TCCR0=(0<<WGM00) | (0<<COM01) | (0<<COM00) | (0<<WGM01) | (1<<CS02) | (0<<CS01) | (1<<CS00);
         OCR0=0x00; 
     
