@@ -1,0 +1,10 @@
+VERSION:3 SOURCE_TIMESTAMP:5227B230
+NODE:I LEVEL:0 LINE:23 "D:\ProgramFiles\Code Vision\inc\mega16.h"
+NODE:I LEVEL:0 LINE:24 "D:\ProgramFiles\Code Vision\inc\delay.h"
+NODE:V LEVEL:0 LINE:28 "State -> RAM:????"
+NODE:V LEVEL:0 LINE:29 "motorState -> R4,R5"
+NODE:V LEVEL:0 LINE:30 "mode -> R6,R7"
+NODE:V LEVEL:0 LINE:31 "n -> R8,R9"
+NODE:V LEVEL:0 LINE:32 "direction -> R10,R11"
+NODE:F LEVEL:0 LINE:35 "timer0_ovf_isr(void)"
+NODE:F LEVEL:0 LINE:66 "main(void)"
