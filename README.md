@@ -17,3 +17,4 @@ Schematic Layout
 
 ## Fifth task
 >Motor Stepper
+![Alt text](https://github.com/Miiitiii/microcontroller/blob/main/Motor_Stepper_Project/Circuit.png)
