@@ -1,0 +1,24 @@
+RAM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+State                                                                             0x0160       8
+h                                                                                 0x0168       2
+
+EEPROM Allocation [bytes]
+Variable                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+
+Register Allocation
+Variable                                                                          Register  Size
+------------------------------------------------------------------------------------------------
+motorState                                                                        R4,R5        2
+mode                                                                              R6,R7        2
+n                                                                                 R8,R9        2
+direction                                                                         R10,R11      2
+counter                                                                           R12,R13      2
+
+FLASH Allocation [words]
+Function                                                                          Address   Size
+------------------------------------------------------------------------------------------------
+timer0_ovf_isr                                                                    0x00067    165
+main                                                                              0x0010C     47
